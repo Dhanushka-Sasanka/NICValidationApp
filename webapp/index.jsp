@@ -34,7 +34,7 @@
 							<img id="loader-text" src="dist/bin/img/logo.png"
 								alt="mobiOS logo" style="max-width: 250px">
 								<div>
-								<h2>Hello Java</h2>
+								<h4>NIC Validator</h4>
 							</div>
 						</div>
 						

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,30 +29,34 @@
 					<thead>
 						<tr>
 							<th scope="col">#</th>
-							<th scope="col">First</th>
-							<th scope="col">Last</th>
-							<th scope="col">Handle</th>
+							<th scope="col">User Name</th>
+							<th scope="col">Address</th>
+							<th scope="col">Nationality</th>
+							<th scope="col">NIC</th>
+							<th scope="col">DOB</th>
+							<th scope="col">Gender</th>
+							<th scope="col">Action</th>
 						</tr>
 					</thead>
-					<tbody>
-						<tr>
-							<th scope="row">1</th>
-							<td>Mark</td>
-							<td>Otto</td>
-							<td>@mdo</td>
-						</tr>
-						<tr>
-							<th scope="row">2</th>
-							<td>Jacob</td>
-							<td>Thornton</td>
-							<td>@fat</td>
-						</tr>
-						<tr>
-							<th scope="row">3</th>
-							<td>Larry</td>
-							<td>the Bird</td>
-							<td>@twitter</td>
-						</tr>
+					<tbody id="userTableBody">
+						<%-- <c:forEach var="user" items="${listUsers}">
+										<tr>
+											<td><c:out value="${user.userID}" /></td>
+											<td><c:out value="${user.userName}" /></td>
+											<td><c:out value="${user.address}" /></td>
+											<td><c:out value="${user.nationality}" /></td>
+											<td><c:out value="${user.nic}" /></td>
+											<td><c:out value="${user.dateOfBirth}" /></td>
+											<td><c:out value="${user.age}" /></td>
+											<td><c:out value="${user.gender}" /></td>
+											<td>
+											<a class="btn btn-success" href="edit?id=<c:out value='${user.userID}'/>">
+											EDIT</a>
+												&nbsp;&nbsp;&nbsp;&nbsp; <a
+												class="btn btn-danger"
+												href="delete?id=<c:out value='${user.userID}' />">REMOVE</a></td>
+										</tr>
+									</c:forEach> --%>
 					</tbody>
 				</table>
 
@@ -73,7 +78,7 @@
 					<div class="modal-body">
 
 						<form id="userAddForm">
-							
+
 							<div class="form-group">
 								<input class="form-control form-control-sm" type="text"
 									placeholder="Full Name" name="username" required="required">
@@ -84,60 +89,19 @@
 							</div>
 							<div class="form-group ">
 								<input class="form-control form-control-sm" type="text"
-									placeholder="Nationality" name="nationality" required="required">
+									placeholder="Nationality" name="nationality"
+									required="required">
 							</div>
 							<div class="form-group ">
 								<input class="form-control form-control-sm" type="text"
-									placeholder="nic" name="nic" required="required">
+									placeholder="nic" name="nic" required="required" id="userNIC">
 							</div>
-							
-							<div class="form-group ">
-								<input class="form-control form-control-sm" type="text"
-									placeholder="age" name="age" required="required">
-							</div>
-							
-							<div class="form-group ">
-								<input class="form-control form-control-sm" type="date"
-									placeholder="dateOfBirth" name="dateOfBirth" required="required">
-							</div>
-							
-							<div class="form-group ">
-								<input class="form-control form-control-sm" type="text"
-									placeholder="gender" name="gender" required="required">
-							</div>
-							
-							<!-- <div class="card mb-3">
-								<div class="row no-gutters">
-									<div class="col-md-4 d-flex justify-content-center">
-										<img src="dist/bin/img/user.png" alt="#" class="m-1">
-									</div>
-									<div class="col-md-8">
-										<div class="card-body text-center">
-											<h5 class="card-title text-info">Personal details</h5>
+							<!-- user nic card view -->
+							<div id="nic-card-view"></div>
 
-											<div class="row justify-content-around">
-												<p class="">DOB</p>
-												<p class="card-text" id="DateOfBirth"  >1995-12-21</p>
-											</div>
+							<!-- card view footer -->
+							<div id="user-addbtn-view"></div>
 
-											<div class="row justify-content-around">
-												<p class="">AGE</p>
-												<p class="card-text" id="age" >1995-12-21</p>
-											</div>
-											
-											<div class="row justify-content-around">
-												<p class="">GENDER</p>
-												<p class="card-text" id="gender" >1995-12-21</p>
-											</div>
-
-										</div>
-									</div>
-								</div> 
-							</div>-->
-
-							<div class="modal-footer">
-								<button type="button" class="btn btn-primary" id="userAddBtn">ADD</button>
-							</div>
 						</form>
 					</div>
 				</div>
@@ -145,17 +109,47 @@
 		</div>
 
 	</div>
-	
+
 	<script type="text/javascript">
 	
-	
-	
-	
-	
-	$('#userAddBtn').click(()=>{
+	function getAllUsers(){
 		
+		$('#userTableBody').empty();
+		$.ajax({
+			 type: "GET",
+			 url: 'user/list',
+			 async: false,
+	         dataType:"json",
+	        
+	         success:function (response){
+				 console.log(JSON.stringfy(response));
+		      	 let tableRow = "";
+			 },
+			 error:function(error){
+				 
+			 }
+			}).done(function(responce){
+				console.log(response);
+			});	
+      	
+	}
+	
+	getAllUsers();
+	
+	function addUserDetsils(){
+	
+		console.log("clicked..");
 		/* let userName = $('#').val(); */
-		let formData = $('#userAddForm').serialize();
+		let formData = $('#userAddForm').serializeArray();
+		/* formData.append("dateOfBirth",new Date());
+		formData.append("age",);
+		formData.append("gender",$('#gender').text()); */
+		
+		console.log($('#dateOfBirth').text());
+		
+		formData.push({name: "dateOfBirth",value : $('#dateOfBirth').text()}); 
+		formData.push({name: "age", value: $('#age').text()}); 
+		formData.push({name: "gender", value: $('#gender').text()}); 
 		
 		$.ajax({
 	        type: "post",
@@ -165,9 +159,14 @@
 	        success:function (response){
 	        	
 	        	if(response){
-	        		alert("USER ADDED..!");
+	        		
+	        		alert("USER ADDED..!"); 
 	        		$('#userAddForm')[0].reset();
 	        		$('#staticBackdrop').modal('hide');
+	        		$('#nic-card-view').empty();
+	                $('#user-addbtn-view').empty();
+	                getAllUsers();
+	        		
 	        		
 	        	}else{
 	        		alert("USER NOT ADDED..!");
@@ -177,6 +176,136 @@
 	        	alert(error);
 	        },
 	    });
+	}
+	
+	
+	function validationNIC(nicNumber) {
+	    var result = false;
+	    if (nicNumber.length === 10 && !isNaN(nicNumber.substr(0, 9)) && isNaN(nicNumber.substr(9, 1).toLowerCase()) && ['x', 'v'].includes(nicNumber.substr(9, 1).toLowerCase())) {
+	        result = true;
+	    } else if (nicNumber.length === 12 && !isNaN(nicNumber)) {
+	        result = true;
+	    } else {
+	        result = false;
+	    }
+	    return result;
+	}
+	
+
+	
+	$('#userNIC').keyup((event)=>{
+
+	    let userNICNo = $('#userNIC').val();
+
+	    if(validationNIC(userNICNo)){
+	        console.log(userNICNo);
+	        $.ajax({
+	            type: "GET",
+	            url: 'user/nic-validation?nic='+userNICNo,
+	            async: false,
+	            dataType:"json",
+	            success:function (response){
+
+	                if(response){
+	                   
+	                    console.log(response);
+	                    $('#nic-card-view').empty();
+	                    $('#user-addbtn-view').empty();
+	                    var nic_card_view ;
+	                    
+	                    if(response['gender'] == "Male"){
+	                    	
+	                    	  nic_card_view = "<div class=\"card mb-3\">\n" +
+	                         "    <div class=\"row no-gutters\">\n" +
+	                         "        <div class=\"col-md-4 d-flex justify-content-center\">\n" +
+	                         "            <img src=\"dist/bin/img/user.png\" alt=\"#\" class=\"m-1\">\n" +
+	                         "        </div>\n" +
+	                         "        <div class=\"col-md-8\">\n" +
+	                         "            <div class=\"card-body text-center\">\n" +
+	                         "                <h5 class=\"card-title text-info\">Personal Detail</h5>\n" +
+	                         "\n" +
+	                         "                <div class=\"row justify-content-around\">\n" +
+	                         "                    <p>DOB</p>\n" +
+	                         "                    <p class=\"card-text\" id=\"dateOfBirth\" name=\"dateOfBirth\">"+response['year']+"/"+response['month']+"/"+response['day']+"</p>\n" +
+	                         "                </div>\n" +
+	                         "\n" +
+	                         "                <div class=\"row justify-content-around\">\n" +
+	                         "                    <p>AGE</p>\n" +
+	                         "                    <p class=\"card-text\" id=\"age\" name=\"age\">"+response['age']+"</p>\n" +
+	                         "                </div>\n" +
+	                         "\n" +
+	                         "                <div class=\"row justify-content-around\">\n" +
+	                         "                    <p>GENDER</p>\n" +
+	                         "                    <p class=\"card-text\" id=\"gender\" name=\"gender\">"+response['gender']+"</p>\n" +
+	                         "                </div>\n" +
+	                         "\n" +
+	                         "            </div>\n" +
+	                         "        </div>\n" +
+	                         "    </div>\n" +
+	                         "</div>";
+	                        
+	                    }
+	                    
+	                   if(response['gender'] == "Female"){
+	                    	
+	                	   nic_card_view = "<div class=\"card mb-3\">\n" +
+	                         "    <div class=\"row no-gutters\">\n" +
+	                         "        <div class=\"col-md-4 d-flex justify-content-center\">\n" +
+	                         "            <img src=\"dist/bin/img/she_user.png\" alt=\"#\" class=\"m-1\">\n" +
+	                         "        </div>\n" +
+	                         "        <div class=\"col-md-8\">\n" +
+	                         "            <div class=\"card-body text-center\">\n" +
+	                         "                <h5 class=\"card-title text-info\">Personal Detail</h5>\n" +
+	                         "\n" +
+	                         "                <div class=\"row justify-content-around\">\n" +
+	                         "                    <p>DOB</p>\n" +
+	                         "                    <p class=\"card-text\" id=\"dateOfBirth\" name=\"dateOfBirth\">"+response['year']+"/"+response['month']+"/"+response['day']+"</p>\n" +
+	                         "                </div>\n" +
+	                         "\n" +
+	                         "                <div class=\"row justify-content-around\">\n" +
+	                         "                    <p>AGE</p>\n" +
+	                         "                    <p class=\"card-text\" id=\"age\" name=\"age\">"+response['age']+"</p>\n" +
+	                         "                </div>\n" +
+	                         "\n" +
+	                         "                <div class=\"row justify-content-around\">\n" +
+	                         "                    <p>GENDER</p>\n" +
+	                         "                    <p class=\"card-text\" id=\"gender\" name=\"gender\">"+response['gender']+"</p>\n" +
+	                         "                </div>\n" +
+	                         "\n" +
+	                         "            </div>\n" +
+	                         "        </div>\n" +
+	                         "    </div>\n" +
+	                         "</div>";
+	                    	
+	                    } 
+	                    
+	                    
+	                        
+	                        let addBtn = "<div class=\"modal-footer\">\n" +
+	                        "    <button type=\"button\" class=\"btn btn-primary\" id=\"userAddBtn\" onclick=\"addUserDetsils()\">ADD</button>\n" +
+	                        "</div>";
+
+
+	                $('#nic-card-view').append(nic_card_view);
+	                $('#user-addbtn-view').append(addBtn);
+	                
+
+	                }else {
+	                	/* alert("NIC NOT VALIED..!"); */
+	                	
+	                }
+	                },
+	                error:function (error){
+	                	alert(error);
+	                },
+	         });
+	                }else{
+	               		 console.log("Valide ne");
+	               		
+	               		$('#nic-card-view').empty();
+		                $('#user-addbtn-view').empty();
+	                }
+
 	});
 	
 	</script>

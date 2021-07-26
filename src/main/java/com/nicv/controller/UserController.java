@@ -15,26 +15,34 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
+import com.nicv.service.UserNICDetailService;
 import com.nicv.service.UserService;
+import com.nicv.service.impl.UserNICDetailServiceImpl;
 import com.nicv.service.impl.UserServiceImpl;
 import com.nicv.model.User;
+import com.nicv.model.UserInputNICDetailResponce;
 
 /**
  * Servlet implementation class UserController
  */
-@WebServlet(urlPatterns = { "/user/new", "/user/insert", "/user/delete", "/user/update",
+@WebServlet(urlPatterns = { "/user/new", "/user/insert","/user/nic-validation", "/user/delete", "/user/update",
 		"/user/edit", "/user/list" })
 public class UserController extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private UserService userService;
+	
+	private UserNICDetailService userNICDetailService;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
     public UserController() {
     	 this.userService = new UserServiceImpl();
+    	 this.userNICDetailService = new UserNICDetailServiceImpl();
     }
 
 	/**
@@ -63,11 +71,14 @@ public class UserController extends HttpServlet {
 				e2.printStackTrace();
 			}
 			break;
-			
-		default:
-//			listUser(request, response);
+		case "/user/nic-validation":
+			try {
+				userNICValidationCheck(request, response);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			break;
-			
 		case "/user/delete":
 			try {
 				deleteUser(request, response);
@@ -99,6 +110,10 @@ public class UserController extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		default:
+//			listUser(request, response);
+			break;
+			
 		}
 		
 		
@@ -113,16 +128,31 @@ public class UserController extends HttpServlet {
 		String nationality = request.getParameter("nationality");
 		String nic = request.getParameter("nic");
 		String dateOfBirth = request.getParameter("dateOfBirth");
-		SimpleDateFormat availDate = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat availDate = new SimpleDateFormat("yyyy/MM/dd");
 		Date chosenDate = availDate.parse(dateOfBirth);
 		String age = request.getParameter("age");
 		int parsedAge = Integer.parseInt(age);
 		String gender = request.getParameter("gender");
 		User newUser = new User(0L, username , address, nationality,nic,chosenDate,parsedAge,gender);
 		System.out.println(newUser);
+		
 		boolean isUserAdded = userService.addUser(newUser);
 		PrintWriter out = response.getWriter();
 		out.print(isUserAdded);
+		
+	}
+			
+	public void	userNICValidationCheck(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		String nic = request.getParameter("nic");
+		
+		UserInputNICDetailResponce returnNICResponce = userNICDetailService.setUserInputNIC(nic);
+		
+//		request.setAttribute("nicResponce", returnNICResponce);
+		
+		PrintWriter out = response.getWriter();
+		JSONObject jo = new JSONObject(returnNICResponce);
+		out.print(jo);
 		
 	}
 	
@@ -131,9 +161,12 @@ public class UserController extends HttpServlet {
 		List<User> listUsers;
 
 		listUsers = userService.getUsers();
-		request.setAttribute("listUsers", listUsers);
-		RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher("/list-users.jsp");
-		dispatcher.forward(request, response);
+		
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		
+		PrintWriter out = response.getWriter();
+		out.write(listUsers.toString());
 
 	}
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
