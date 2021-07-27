@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import com.nicv.model.User;
 import com.nicv.service.UserService;
 import com.nicv.util.CrudUtil;
@@ -31,16 +34,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<User> getUsers() throws Exception {
+	public JSONArray getUsers() throws Exception {
 		List<User> users = new ArrayList<>();
-
+		JSONArray userToJSonArray = new JSONArray();
+		
 		String sql = "SELECT *  from users ORDER BY convert(userID, DECIMAL)";
 		ResultSet rst = CrudUtil.executeQuery(sql);
+		
 		while (rst.next()) {
-			users.add(new User(rst.getLong(1), rst.getString(2), rst.getString(3), rst.getString(4), rst.getString(5),
-					rst.getDate(6), rst.getInt(7), rst.getString(8)));
+			
+			userToJSonArray.put(new JSONObject(new User(rst.getLong(1), rst.getString(2), rst.getString(3), rst.getString(4), rst.getString(5),
+					rst.getDate(6), rst.getInt(7), rst.getString(8))));
 		}
-		return users;
+		
+		return userToJSonArray;
+		
 	}
 
 	@Override

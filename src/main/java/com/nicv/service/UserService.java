@@ -3,6 +3,8 @@ package com.nicv.service;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
+
 import com.nicv.model.User;
 
 
@@ -33,7 +35,7 @@ public interface UserService {
 	 *
 	 * @return ArrayList<User>
 	 */
-	public List<User> getUsers() throws Exception;
+	public JSONArray getUsers() throws Exception;
 
 	/**
 	 * Update existing User

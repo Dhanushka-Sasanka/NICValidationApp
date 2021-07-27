@@ -5,7 +5,8 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+
+
 <style type="text/css">
 </style>
 </head>
@@ -25,17 +26,17 @@
 
 			<div class="card-body">
 
-				<table class="table table-striped">
+				<table class="display" id="userTable" style="width:100% ; position: relative;">
 					<thead>
 						<tr>
-							<th scope="col">#</th>
-							<th scope="col">User Name</th>
-							<th scope="col">Address</th>
-							<th scope="col">Nationality</th>
-							<th scope="col">NIC</th>
-							<th scope="col">DOB</th>
-							<th scope="col">Gender</th>
-							<th scope="col">Action</th>
+							<th >#UID</th>
+							<th >User Name</th>
+							<th >Address</th>
+							<th >Nationality</th>
+							<th >NIC</th>
+							<th >DOB</th>
+							<th >Gender</th>
+							<th >Action</th>
 						</tr>
 					</thead>
 					<tbody id="userTableBody">
@@ -112,25 +113,49 @@
 
 	<script type="text/javascript">
 	
+	$(document).ready(function() {
+		$('#userTable').DataTable();
+	} );
 	function getAllUsers(){
 		
 		$('#userTableBody').empty();
-		$.ajax({
+		
+		 $.ajax({
 			 type: "GET",
 			 url: 'user/list',
 			 async: false,
 	         dataType:"json",
-	        
 	         success:function (response){
-				 console.log(JSON.stringfy(response));
-		      	 let tableRow = "";
+				 console.log(response);
+				 
+				 for(let i in response){
+					 let user = response[i];
+				 
+				 
+		      	 let tableRow = "<tr>\n" +
+                 "    <td>"+user.userID+"</td>\n" +
+                 "    <td>"+user.userName+"</td>\n" +
+                 "    <td>"+user.address+"</td>\n" +
+                 "    <td>"+user.nationality+"</td>\n" +
+                 "    <td>"+user.nic+"</td>\n" +
+                 "    <td>"+user.dateOfBirth+"</td>\n" +
+                 "    <td>"+user.gender+"</td>\n" +
+                 "\n" +
+                 "    <td>\n" +
+                 "        <a class=\"btn btn-success\" onclick=\"editUser("+user.userID+")\"><i class=\"far fa-edit\"></i></a>\n" +
+                 "         <a class=\"btn btn-danger\" onclick=\"deleteUser("+user.userID+")\"><i class=\"far fa-trash-alt\"></i></a>\n" +
+                 "    </td>\n" +
+                 "</tr>";
+                 
+		      	$('#userTableBody').append(tableRow);
+                 
+				 }
 			 },
+			
 			 error:function(error){
 				 
 			 }
-			}).done(function(responce){
-				console.log(response);
-			});	
+		});
       	
 	}
 	
@@ -160,7 +185,11 @@
 	        	
 	        	if(response){
 	        		
-	        		alert("USER ADDED..!"); 
+	        		Swal.fire(
+	        				  'Good job!',
+	        				  'User Added Success..!',
+	        				  'success'
+	        				)
 	        		$('#userAddForm')[0].reset();
 	        		$('#staticBackdrop').modal('hide');
 	        		$('#nic-card-view').empty();
@@ -169,7 +198,11 @@
 	        		
 	        		
 	        	}else{
-	        		alert("USER NOT ADDED..!");
+	        		Swal.fire(
+	        				  'Oops!',
+	        				  'User Added Failed..!',
+	        				  'error'
+	        				)
 	        	}
 	        },
 	        error:function (error){
@@ -308,6 +341,69 @@
 
 	});
 	
+	
+	function deleteUser(userID){
+		
+		
+		Swal.fire({
+			  title: 'Do you want to remove user, That userID = '+userID+'?',
+			  showCancelButton: true,
+			  confirmButtonText: `DELETE`,
+			}).then((result) => {
+			  /* Read more about isConfirmed, isDenied below */
+			  if (result.isConfirmed) {
+					 $.ajax({
+						 type: "GET",
+						 url: 'user/delete?id='+userID,
+						 async: false,
+				         success:function (response){
+							 console.log(response);
+								if(response){
+									 Swal.fire('User Removed!', '', 'success')
+									getAllUsers();
+							 	}else{
+							 		 Swal.fire('User Not Removed!', '', 'info')
+							 	}
+							},
+						
+						 error:function(error){
+							 
+						 }
+					});
+			   
+			  } else if (result.isDenied) {
+			    Swal.fire('Changes are not saved', '', 'info')
+			  }
+			})
+		
+
+		
+	}
+	
+	function editUser(userID){
+		
+		 $.ajax({
+			 type: "GET",
+			 url: 'user/edit?id='+userID,
+			 async: false,
+			 dataType:"json",
+	         success:function (response){
+				 console.log(response);
+					if(response != {}){
+						
+						alert(JSON.stringify(response));
+						
+						
+				 	}else{
+				 		alert("CAN'T EDIT THIS USER...!") 
+				 	}
+				},
+			
+			 error:function(error){
+				 
+			 }
+		});
+	}
 	</script>
 
 </body>

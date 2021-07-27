@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.nicv.service.UserNICDetailService;
@@ -158,24 +159,32 @@ public class UserController extends HttpServlet {
 	
 	public void listUser(HttpServletRequest request, HttpServletResponse response)
 			throws FileNotFoundException, SQLException, Exception {
-		List<User> listUsers;
+		JSONArray listUsers;
 
 		listUsers = userService.getUsers();
 		
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
+		//response.setContentType("application/json");
+		//response.setCharacterEncoding("UTF-8");
 		
-		PrintWriter out = response.getWriter();
-		out.write(listUsers.toString());
+		PrintWriter out = response.getWriter();	
+		out.print(listUsers);
 
 	}
 	private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String id = request.getParameter("id");
 		User existingUser = userService.getUserByID(Long.parseLong(id));
-		RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher("/users.jsp");
-		request.setAttribute("existingUser", existingUser);
+		PrintWriter out = response.getWriter();
+		if(existingUser != null) {
+			
+			JSONObject jo = new JSONObject(existingUser);
+			out.print(jo);
+		}else {
+			JSONObject jo = new JSONObject();
+			out.print(jo);
+		}
 		
-		dispatcher.forward(request, response);
+		
+		
 
 	}
 	private void updateUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -200,8 +209,11 @@ public class UserController extends HttpServlet {
 	
 	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String id = request.getParameter("id");
-		userService.removeUser(Long.parseLong(id));
-		response.sendRedirect("list");
+		boolean isUserDeleted = userService.removeUser(Long.parseLong(id));
+		
+		PrintWriter out = response.getWriter();
+		out.print(isUserDeleted);
+		
 
 	}
 

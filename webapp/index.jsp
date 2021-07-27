@@ -11,6 +11,8 @@
 	href="dist/bin/template/fonts/material-icon/css/material-design-iconic-font.min.css">
 <link rel="stylesheet" href="dist/bin/template/css/style.css">
 <link rel="stylesheet" href="dist/bin/css/main-styles.css">
+<link href="dist/bin/fontawesome/css/all.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet">
 
 </head>
 <body>
@@ -63,5 +65,8 @@
 	<script src="dist/bin/js/main-form-js/TweenLite.min.js"></script>
 	<script src="dist/bin/js/main-form-js/demo.js"></script>
 	<script src="dist/controller/loaderController.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="dist/bin/datatable/datatable.js"></script>
+	
 </body>
 </html>
