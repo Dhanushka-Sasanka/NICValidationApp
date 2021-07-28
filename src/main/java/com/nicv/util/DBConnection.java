@@ -7,32 +7,42 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBConnection {
-	
-	 private static DBConnection dBConnection;
-	    private Connection connection;
 
-	    private  DBConnection() {
-	        try {
-				
-	            Class.forName("com.mysql.jdbc.Driver");
-	            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/user_db", "root", "1234");
-	            
-	        } catch (SQLException ex) {
-	            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-	        } catch (ClassNotFoundException ex) {
-	            Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
-	        }
-	    }
+	private static DBConnection dBConnection;
+	private Connection connection;
 
-	    public static DBConnection getDBInstance() {
-	        if (dBConnection == null) {
-	            dBConnection = new DBConnection();
-	        }
-	        return dBConnection;
-	    }
+	private static final String P_WORD = "user_nic_mng";
+	private static final String USER = "user_nic_mng";
+	private static final String SERVER = "www.db4free.net";
+	private static final String PORT = "3306";
+	private static final String DATABASE = "user_nic_mng_db";
+	private static final String OPTIONS = "?characterEncoding=utf8";
 
-	    public Connection getConnection() {
-	        return connection;
-	    }
+	private DBConnection() {
+		try {
+
+			Class.forName("com.mysql.cj.jdbc.Driver");
+//	            for localhost database
+//	            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/user_db", "root", "1234");
+
+			connection = DriverManager.getConnection("jdbc:mysql://"+SERVER+":" + PORT + "/" + DATABASE + OPTIONS, USER, P_WORD);
+
+		} catch (SQLException ex) {
+			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (ClassNotFoundException ex) {
+			Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	public static DBConnection getDBInstance() {
+		if (dBConnection == null) {
+			dBConnection = new DBConnection();
+		}
+		return dBConnection;
+	}
+
+	public Connection getConnection() {
+		return connection;
+	}
 
 }

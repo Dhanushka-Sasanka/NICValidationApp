@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 		List<User> users = new ArrayList<>();
 		JSONArray userToJSonArray = new JSONArray();
 		
-		String sql = "SELECT *  from users ORDER BY convert(userID, DECIMAL)";
+		String sql = "SELECT *  from users";
 		ResultSet rst = CrudUtil.executeQuery(sql);
 		
 		while (rst.next()) {
